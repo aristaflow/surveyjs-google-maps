@@ -62,10 +62,26 @@ var addressautocomplete = {
     },
     /**
      * Transfers data from the given address object to the survey by matching on the question's
-     * name, if available.
+     * name, if available. Target questions will be searched in the designated parent element using
+     * the following (question) names:
+     * NameOfAutoCompleteQuestion.AddressFieldName
+     * NameOfAutoCompleteQuestionAddressFieldName
+     * AddressFieldName
+     *
+     * This allows for several autocomplete widgets on the same survey.
      */
-    transferValue: function(address, survey, fieldName) {
-        var cq = survey.getQuestionByName(fieldName);
+    transferValue: function(address, parent, fieldName, thisQuestionName) {
+        var targetName = thisQuestionName + '.' + fieldName;
+        var cq = parent.getQuestionByName(targetName);
+        if (!cq) {
+          targetName = thisQuestionName + fieldName;
+          cq = parent.getQuestionByName(targetName);
+        }
+        if (!cq) {
+          targetName = fieldName;
+          cq = parent.getQuestionByName(targetName);
+        }
+
         if (cq) {
             cq.value = address[fieldName];
         }
@@ -129,8 +145,20 @@ var addressautocomplete = {
             var valueSet = false;
             // transfer all values to questions, if they exist
             Object.getOwnPropertyNames(address).forEach(function(fieldName) {
-                that.transferValue(address, survey, fieldName)
-                if (fieldName == question.name) {
+                if (!question.parent) {
+                    that.transferValue(address, survey, fieldName, question.name)
+                } else {
+                    that.transferValue(address, question.parent, fieldName, question.name)
+                }
+
+				// prefer the value name over the question name
+                if (!valueSet && question.name + fieldName == question.valueName) {
+                  input.value = address[fieldName];
+                  question.value = address[fieldName];
+                  valueSet = true;
+                }
+                // only use the question name if no valueName is set
+                else if (!valueSet && !question.valueName && fieldName == question.name) {
                   input.value = address[fieldName];
                   question.value = address[fieldName];
                   valueSet = true;
