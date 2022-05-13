@@ -149,5 +149,12 @@ var addressautocomplete = {
     }
 }
 
-// register the widget in the custom widget collection
-Survey.CustomWidgetCollection.Instance.addCustomWidget(addressautocomplete, "addressautocomplete");
+// Register the widget in the custom widget collection if available.
+try {
+    google.maps.places.Autocomplete;
+
+    Survey.CustomWidgetCollection.Instance.addCustomWidget(addressautocomplete, "addressautocomplete");
+}
+catch(e) {
+    console.info("Google Autocomplete not loaded. Probably no valid API-Key provided.");
+}
