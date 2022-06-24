@@ -126,16 +126,27 @@ var addressautocomplete = {
             var formattedAddress = place.formatted_address;
             var address = {
                 streetName: streetName,
+                StreetName: streetName,
                 streetNumber: streetNumber,
+                StreetNumber: streetNumber,
                 postalCode: postalCode,
+                PostalCode: postalCode,
                 neighborhood: neighborhood,
+                Neighborhood: neighborhood,
                 sublocality: sublocality,
+                Sublocality: sublocality,
                 city: city,
+                City: city,
                 administrativeArea: administrativeArea,
+                AdministrativeArea: administrativeArea,
                 countryShort: countryShort,
+                CountryShort: countryShort,
                 country: country,
+                Country: country,
                 street: streetName + ((streetNumber) ?  ' ' + streetNumber : ''),
-                formattedAddress: formattedAddress
+                Street: streetName + ((streetNumber) ?  ' ' + streetNumber : ''),
+                formattedAddress: formattedAddress,
+                FormattedAddress: formattedAddress
             };
             console.info("Retrieved address data:", place.address_components)
             console.info("Formatted address: %s", place.formatted_address);
@@ -151,7 +162,7 @@ var addressautocomplete = {
                     that.transferValue(address, question.parent, fieldName, question.name)
                 }
 
-				// prefer the value name over the question name
+                // prefer the value name over the question name
                 if (!valueSet && question.name + fieldName == question.valueName) {
                   input.value = address[fieldName];
                   question.value = address[fieldName];

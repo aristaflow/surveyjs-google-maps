@@ -51,6 +51,9 @@ While the second name will be assigned the corresponding value even when having 
 widgets, the resulting JSON will loose this value since the `valueName` needs to be unique with
 respect to the survey.
 
+To improve readability, every field is also available starting with an upper-case character. This is
+especially useful when combining without separator, e. g. `address1City`.
+
 #### Example
 > {
 >   "pages": [
