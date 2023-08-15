@@ -23,7 +23,7 @@ var addressautocomplete = {
         else {
             text = el;
         }
-        text.className = "sv-text";
+        text.className = "sd-input sd-text sv-text";
         this.initMap(text, {}, question);
     },
     willUnmount: function (question, el) {
