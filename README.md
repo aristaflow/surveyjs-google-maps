@@ -5,14 +5,24 @@ Allows address autocomplete and fills other questions with related address parts
 ## Usage
 
 - Add the Google Maps API using your key to your
-  site: ```<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places"></script>```
+  site: ```<script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&loading=async&libraries=places&v=weekly"></script>```
+- In the Google Cloud project that owns the API key, enable **"Places API (New)"**.
+  This widget uses `google.maps.places.PlaceAutocompleteElement` and no longer supports
+  the legacy `google.maps.places.Autocomplete` (closed to new Google customers since
+  2025-03-01).
 - Add `surveyjs-google-maps-widget.js` to your SurveyJS site.
-- Use the widget by adding a question with type`"type": "addressautocomplete"`
-- The widget will enable Google Maps Autocomplete on the question and will retrieve the
-  corresponding address from Google. Afterwards specific fields of the address will be stored in
-  various questions and/or the autocomplete question itself. See [below](#address-parts).
-- The autocomplete feature will be disabled if Google Maps Autocomplete is not available, e. g. the
-  API key is missing.
+- Use the widget by adding a question with type `"type": "addressautocomplete"`
+- The widget will show the SurveyJS input field with whatever value is currently stored
+  in it. When the user clicks into the field, it is replaced by a Google
+  `<gmp-place-autocomplete>` web component for searching. After the user picks a
+  suggestion, specific fields of the address are stored in various questions and/or the
+  autocomplete question itself (see [below](#address-parts)), and the input field
+  reappears showing the matched value. The web component reappears whenever the field
+  is focused again. Clicking elsewhere or pressing Escape during a search reverts to the
+  input without changing the stored value.
+- The autocomplete feature will be disabled if `PlaceAutocompleteElement` is not
+  available on the loaded Google Maps script (e.g. the API key is missing or `Places
+  API (New)` is not enabled).
 
 ### Address Parts {#address-parts}
 
