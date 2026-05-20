@@ -260,6 +260,41 @@ var addressautocomplete = {
         }
         el.style.display = 'none';
 
+        // Small "✕" clear button shown next to the SurveyJS input when it has a
+        // stored value. Without this the user cannot remove a previously-picked
+        // address: focusing the input swaps to the (empty) web component, and
+        // blurring it without picking keeps the old value. The button overlays
+        // the right edge of the input via absolute positioning; we make the
+        // parent a positioning context only if it isn't already one.
+        var clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.textContent = '✕';
+        clearBtn.setAttribute('aria-label', 'Clear address');
+        clearBtn.tabIndex = -1;
+        clearBtn.style.cssText =
+            'position:absolute;right:8px;top:50%;transform:translateY(-50%);' +
+            'background:transparent;border:none;cursor:pointer;color:#888;' +
+            'font-size:16px;line-height:1;padding:4px;display:none;';
+        if (input.parentNode instanceof HTMLElement) {
+            if (getComputedStyle(input.parentNode).position === 'static') {
+                input.parentNode.style.position = 'relative';
+            }
+            input.parentNode.insertBefore(clearBtn, input.nextSibling);
+        }
+
+        var updateClearVisibility = function () {
+            clearBtn.style.display =
+                input.style.display !== 'none' && input.value ? '' : 'none';
+        };
+
+        clearBtn.addEventListener('click', function () {
+            input.value = '';
+            question.value = '';
+            updateClearVisibility();
+        });
+
+        updateClearVisibility();
+
         var that = this;
         el.addEventListener('gmp-select', async function(event) {
             try {
@@ -277,6 +312,7 @@ var addressautocomplete = {
                 if (applied) {
                     el.style.display = 'none';
                     input.style.display = '';
+                    updateClearVisibility();
                 }
             } catch (e) {
                 console.info("PlaceAutocompleteElement selection error", e);
@@ -291,6 +327,7 @@ var addressautocomplete = {
                 el.setAttribute('value', '');
                 el.style.display = '';
                 input.style.display = 'none';
+                updateClearVisibility();
                 el.focus();
             }
         });
@@ -305,6 +342,7 @@ var addressautocomplete = {
                 if (el.style.display !== 'none') {
                     el.style.display = 'none';
                     input.style.display = '';
+                    updateClearVisibility();
                 }
             }, 0);
         });
