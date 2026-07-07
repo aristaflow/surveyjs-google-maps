@@ -319,7 +319,8 @@ var addressautocomplete = {
             }
         });
 
-        input.addEventListener('focus', function() {
+        // Swap the SurveyJS input out for the web component so the user can search.
+        var showAutocomplete = function() {
             if (el.style.display === 'none') {
                 // clear any previously-selected address so the user starts a fresh
                 // search rather than seeing the formatted address of the last pick
@@ -330,7 +331,19 @@ var addressautocomplete = {
                 updateClearVisibility();
                 el.focus();
             }
-        });
+        };
+        input.addEventListener('focus', showAutocomplete);
+
+        // If the input is ALREADY the focused element by the time we get here, the
+        // 'focus' event has already fired and the listener above will never run — so
+        // the swap never happens, the user sees a plain text field, types a street
+        // name, and nothing autocompletes. This is what projects hit when SurveyJS's
+        // automatic first-question focus (focusFirstQuestionAutomatic, on by default)
+        // runs before afterRender attaches the listener. Perform the swap now to
+        // recover that case.
+        if (document.activeElement === input) {
+            showAutocomplete();
+        }
 
         // Revert to the SurveyJS input when the user dismisses the web component
         // without picking anything — either by clicking elsewhere (blur) or by
